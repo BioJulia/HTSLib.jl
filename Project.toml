@@ -1,0 +1,4 @@
+name = "HTSLib"
+uuid = "967b4d16-c30e-43f3-8a16-58933212b586"
+version = "0.1.0"
+authors = ["Ciarán O'Mara <Ciaran.OMara@utas.edu.au>"]
