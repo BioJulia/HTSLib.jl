@@ -134,6 +134,12 @@ Each function carries the C declaration it binds in a comment, and structs used 
 
 Most of the bindings are generated with [Clang.jl](https://github.com/JuliaInterop/Clang.jl) from the headers of htslib_jll, as `gen/selection.jl` selects them, and the generator checks the structs written by hand against htslib; [`gen/README.md`](gen/README.md) describes how to add a function and regenerate them.
 
+## Contributing
+
+We appreciate contributions from users including reporting bugs, fixing issues, improving performance and adding new features.
+See the [contributing files](https://github.com/BioJulia/Contributing) for detailed contributor and maintainer guidelines and the code of conduct.
+
+This project follows [semantic versioning](https://semver.org), and records notable changes in [CHANGELOG.md](CHANGELOG.md).
 ## Testing
 
 The tests check the bindings and the thin layer over them, not htslib itself: the layouts of the structs, that libhts has every bound symbol, and that the layer passes options and positions to htslib, iterates, frees what it allocates and reports errors, on a few records with results worked out by hand:

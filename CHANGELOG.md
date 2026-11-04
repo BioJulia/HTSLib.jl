@@ -22,5 +22,5 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - A GenomicFeatures extension, which gives alignments and Tabix records the interval interface, `group_name`, `left_position`, `right_position` and `strand`, and converts them to `GenomicInterval`s, 1-based and inclusive, with the record as the metadata of `GenomicInterval(record)`, or none for `GenomicInterval{Nothing}(record)`.
 - Requires Julia 1.12, for the `public` keyword and workspaces.
 - The tests and the documentation are projects of the package's workspace, resolved together with it in one manifest; the generator of the bindings, `gen/`, is a project of its own.
-- CI: unit tests on the oldest Julia that the compat admits and the latest release, on Linux, macOS and Windows, with coverage, documentation, Runic formatting and Dependabot, with the actions pinned to commits.
+- CI: unit tests on the oldest Julia that the compat admits and the latest release, on Linux, macOS and Windows, with coverage, documentation, Runic formatting, TagBot and Dependabot, with the actions pinned to commits.
 - Documentation, with a reference of the low-level bindings.
