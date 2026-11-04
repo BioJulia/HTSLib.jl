@@ -8,7 +8,7 @@
 
 using Test
 using HTSLib
-using HTSLib: bgzip, bgzip_decompress, tabix_index, sequence_names, overlaps, query, each_overlap, records, each_record
+using HTSLib: bgzip, bgzip_decompress, tabix_index, sequence_names, sequence_lengths, overlaps, query, each_overlap, records, each_record
 using MemoryViews: ImmutableMemoryView
 using StringViews: StringView
 # The functions of the Libdl standard library, which Base has without the dependency.
@@ -85,13 +85,16 @@ else
         end
 
         @testset "Type Hierarchy" begin
+            @test AlignmentFile <: AbstractHTSFile
             @test TabixFile <: AbstractHTSFile
             # A record owns its bytes or borrows htslib's, which its type parameter says; a view is a borrowing record.
-            @test TabixRecord <: AbstractHTSRecord
+            @test AlignmentRecord <: AbstractHTSRecord && TabixRecord <: AbstractHTSRecord
+            @test AlignmentRecordView === AlignmentRecord{HTSLib.Borrowed} && AlignmentRecordView <: AlignmentRecord
             @test TabixRecordView === TabixRecord{HTSLib.Borrowed} && TabixRecordView <: TabixRecord
         end
 
         include("tabix/tabix.jl")
+        include("alignments/alignments.jl")
     end
 
 end

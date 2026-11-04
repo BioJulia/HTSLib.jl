@@ -9,7 +9,7 @@ abstract type Ownership end
 """
     HTSLib.Owned
 
-The type parameter of a record that owns its bytes, in Julia's memory, so that it stays valid after the next iteration and after its file is closed: `TabixRecord{Owned}`.
+The type parameter of a record that owns its bytes, in Julia's memory, so that it stays valid after the next iteration and after its file is closed: `TabixRecord{Owned}` and `AlignmentRecord{Owned}`.
 `copy` gives one from a view.
 """
 struct Owned <: Ownership end
@@ -17,7 +17,7 @@ struct Owned <: Ownership end
 """
     HTSLib.Borrowed
 
-The type parameter of a record that borrows a buffer of htslib, which the next record read overwrites, so that it is only valid until the next iteration: `TabixRecordView`, which is `TabixRecord{Borrowed}`.
+The type parameter of a record that borrows a buffer of htslib, which the next record read overwrites, so that it is only valid until the next iteration: `TabixRecordView`, which is `TabixRecord{Borrowed}`, and `AlignmentRecordView`, which is `AlignmentRecord{Borrowed}`.
 """
 struct Borrowed <: Ownership end
 

@@ -3,6 +3,7 @@
 Julia bindings to [htslib](https://github.com/samtools/htslib), the C library behind `bgzip`, `tabix` and samtools, loaded from [htslib_jll](https://github.com/JuliaBinaryWrappers/htslib_jll.jl).
 
 HTSLib.jl compresses files with BGZF, builds and loads tabix indexes, and reads records by region or from start to end, as the `bgzip` and `tabix` command-line tools do.
+It reads SAM, BAM and CRAM files, from start to end and by region, as samtools does.
 
 Currently, this package's main use is as a reference implementation in-process, to validate and benchmark Julia packages against htslib without starting a process for each call.
 Pull requests to fill the gap for other uses are welcome.
@@ -68,6 +69,49 @@ end
 
 `tabix_index` also takes the columns and header settings of `tabix -s`, `-b`, `-e`, `-0`, `-c` and `-S`; see its docstring.
 Without `preset`, it detects the preset as `tabix` does, from the name or the contents of the file, and where `tabix` would use the GFF preset for a file that it cannot detect, it throws an `ArgumentError` that asks for one; so do BAM, CRAM and BCF files, which `tabix` indexes with htslib's other indexers.
+
+## SAM, BAM and CRAM
+
+```julia
+using HTSLib
+using HTSLib: sequence_names, sequence_lengths, records, overlaps
+
+AlignmentFile("reads.bam") do file
+    HTSLib.format(file)                            # :bam
+    sequence_names(file), sequence_lengths(file)   # the reference sequences of the header
+    String(file.header)                            # the header text
+    records(file)                                  # every record, as `samtools view reads.bam`
+    for record in overlaps(file, "chr1:1001-2000") # as `samtools view reads.bam chr1:1001-2000`
+        string(record)                             # the SAM line, as samtools prints it
+        HTSLib.pos(record), HTSLib.end_position(record)
+    end
+end
+```
+
+HTSLib.jl only reads alignment files, to report what htslib finds in them.
+Test files can be converted from SAM and indexed with htslib through `HTSLib.Bindings`, as samtools does, which the tests of HTSLib.jl show.
+
+A CRAM file needs its FASTA reference, `AlignmentFile("reads.cram"; reference = "genome.fa")`, or htslib looks it up as samtools does, which may download it.
+As samtools does, htslib adds `MD` and `NM` tags computed from the reference to the records of a CRAM file.
+
+As Tabix records are, alignment records are owned, `AlignmentRecord{HTSLib.Owned}`, or views, `AlignmentRecordView`, which `copy = false` yields.
+`HTSLib.data(record)` gives the variable-length fields as htslib lays them out, as an `ImmutableMemoryView{UInt8}`.
+`string(record)` gives the SAM line of a record, with every field.
+The accessors give what htslib makes of a record's name and position.
+They take the names of the SAM specification's fields, with aliases where the specification names a field otherwise, and, like the functions, are public but not exported:
+
+| Accessor | Value | Aliases |
+|:--|:--|:--|
+| `HTSLib.qname` | QNAME, "Query template NAME", as a `StringView` of the record's data, valid as long as the record is | `template_name` |
+| `HTSLib.rname` | RNAME, "Reference sequence NAME", as the header's `String`, or `nothing` without one | `reference_name` |
+| `HTSLib.pos` | POS, "1-based leftmost mapping POSition", or 0 without one | `position` |
+| `HTSLib.end_position` | the last reference base that the CIGAR covers, 1-based, as htslib's `bam_endpos` computes it: an unmapped record, or one without a CIGAR, covers one base, and a record without a position ends at 0 | — |
+| `HTSLib.reference_index` | the 1-based index of RNAME into `sequence_names`, or 0 without one | — |
+
+| Function | samtools equivalent |
+|:--|:--|
+| `AlignmentFile(path; index, reference)`, `records(file)`, `each_record(file)` | `samtools view path` |
+| `overlaps(file, region)`, `each_overlap(file, region)` | `samtools view path region`, with `"*"` for records without a position |
 
 ## Low-level bindings
 

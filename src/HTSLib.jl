@@ -4,6 +4,7 @@
 Julia bindings to [htslib](https://github.com/samtools/htslib), the C library behind `bgzip`, `tabix` and samtools, from htslib_jll.
 
 HTSLib compresses files with BGZF, builds and loads tabix indexes, and reads records by region or from start to end, as the `bgzip` and `tabix` command-line tools do.
+It reads SAM, BAM and CRAM files, from start to end and by region, as samtools does.
 Its use is as a reference implementation, to validate and benchmark Julia packages against htslib in-process, so it reports what htslib finds rather than offering an API of its own for the formats.
 The low-level bindings are in [`HTSLib.Bindings`](@ref).
 """
@@ -23,15 +24,25 @@ export
     TabixIndex,
     TabixFile,
     TabixRecordView,
-    TabixRecord
+    TabixRecord,
+
+    # SAM, BAM and CRAM.
+    AlignmentHeader,
+    AlignmentFile,
+    AlignmentRecordView,
+    AlignmentRecord
 
 # BGZF compression, tabix indexes, and reading records.
 public bgzip, bgzip_decompress, tabix_index, sequence_names, overlaps, query, each_overlap, records, each_record
 
-public Bindings, is_available, version
+# The reference sequences of an alignment file.
+public sequence_lengths
 
-# Accessors of tabix records.
-public position, interval_0based, sequence_name, line
+public Bindings, is_available, version, format
+
+# Accessors of alignments and tabix records.
+public qname, rname, pos, template_name, reference_name, position, end_position, reference_index, interval_0based
+public sequence_name, line, data
 
 # Whether the positions of a tabix-indexed file are 0-based.
 public is_zero_based
@@ -42,14 +53,14 @@ public Owned, Borrowed
 """
     AbstractHTSFile
 
-Abstract supertype for all HTSLib file handles (`TabixFile`).
+Abstract supertype for all HTSLib file handles (`AlignmentFile`, `TabixFile`).
 """
 abstract type AbstractHTSFile end
 
 """
     AbstractHTSRecord
 
-Abstract supertype for all HTSLib records: `TabixRecord`, which owns its bytes, as a `TabixRecord{HTSLib.Owned}`, or borrows a buffer of htslib, as a `TabixRecordView`, which is `TabixRecord{HTSLib.Borrowed}`.
+Abstract supertype for all HTSLib records: `TabixRecord` and `AlignmentRecord`, each of which owns its bytes, as a `TabixRecord{HTSLib.Owned}`, or borrows a buffer of htslib, as a `TabixRecordView`, which is `TabixRecord{HTSLib.Borrowed}`.
 """
 abstract type AbstractHTSRecord end
 
@@ -57,11 +68,12 @@ include("Bindings.jl")
 include("ownership.jl")
 include("bgzf.jl")
 include("tabix/tabix.jl")
+include("alignments/alignments.jl")
 
 """
     query(file, region...)
 
-An alias of [`overlaps`](@ref), after htslib's region query, `tbx_itr_querys`, and the region query of `tabix`.
+An alias of [`overlaps`](@ref), after htslib's region queries, `tbx_itr_querys` and `sam_itr_querys`, and the region query of `tabix` and `samtools view`.
 """
 const query = overlaps
 
