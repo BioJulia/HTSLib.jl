@@ -113,6 +113,11 @@ They take the names of the SAM specification's fields, with aliases where the sp
 | `AlignmentFile(path; index, reference)`, `records(file)`, `each_record(file)` | `samtools view path` |
 | `overlaps(file, region)`, `each_overlap(file, region)` | `samtools view path region`, with `"*"` for records without a position |
 
+## GenomicFeatures
+
+With GenomicFeatures loaded, alignments and Tabix records have its interval interface: `group_name` is `rname` of an alignment and `sequence_name` of a Tabix record, `left_position` and `right_position` are 1-based and inclusive, and `strand` is an alignment's, from its FLAG, or unknown.
+`GenomicInterval(record)` converts a record to a `GenomicInterval`, with the record as its metadata, and `GenomicInterval{Nothing}(record)` without.
+
 ## Low-level bindings
 
 `HTSLib.Bindings` has a `ccall` of each C function that HTSLib.jl uses, and of others that packages need, such as writing alignments and building their indexes, with htslib's structs and constants.

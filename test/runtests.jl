@@ -95,6 +95,7 @@ else
 
         include("tabix/tabix.jl")
         include("alignments/alignments.jl")
+        include("ext/HTSLibGenomicFeaturesExt.jl")
     end
 
 end
