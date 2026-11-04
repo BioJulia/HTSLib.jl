@@ -1,5 +1,10 @@
 # HTSLib.jl
 
+[![Latest Release](https://img.shields.io/github/release/BioJulia/HTSLib.jl.svg)](https://github.com/BioJulia/HTSLib.jl/releases/latest)
+[![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/BioJulia/HTSLib.jl/blob/master/LICENSE)
+[![Stable documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://biojulia.github.io/HTSLib.jl/stable)
+[![Latest documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://biojulia.github.io/HTSLib.jl/dev)
+
 Julia bindings to [htslib](https://github.com/samtools/htslib), the C library behind `bgzip`, `tabix` and samtools, loaded from [htslib_jll](https://github.com/JuliaBinaryWrappers/htslib_jll.jl).
 
 HTSLib.jl compresses files with BGZF, builds and loads tabix indexes, and reads records by region or from start to end, as the `bgzip` and `tabix` command-line tools do.
@@ -7,6 +12,8 @@ It reads SAM, BAM and CRAM files, from start to end and by region, as samtools d
 
 Currently, this package's main use is as a reference implementation in-process, to validate and benchmark Julia packages against htslib without starting a process for each call.
 Pull requests to fill the gap for other uses are welcome.
+
+For each part in depth, including positions and intervals, records and views, and htslib's messages, see the [documentation](https://biojulia.github.io/HTSLib.jl/stable).
 
 ## Installation
 
@@ -89,7 +96,7 @@ end
 ```
 
 HTSLib.jl only reads alignment files, to report what htslib finds in them.
-Test files can be converted from SAM and indexed with htslib through `HTSLib.Bindings`, as samtools does, which the tests of HTSLib.jl show.
+Test files can be converted from SAM and indexed with htslib through `HTSLib.Bindings`, as samtools does, which the documentation's examples show.
 
 A CRAM file needs its FASTA reference, `AlignmentFile("reads.cram"; reference = "genome.fa")`, or htslib looks it up as samtools does, which may download it.
 As samtools does, htslib adds `MD` and `NM` tags computed from the reference to the records of a CRAM file.

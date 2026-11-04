@@ -21,4 +21,5 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Iterators that yield owned records by default, and with `copy = false`, views, which allocate nothing; `copy` keeps a view as an owned record, allocating only its bytes, and `collect` copies every view.
 - A GenomicFeatures extension, which gives alignments and Tabix records the interval interface, `group_name`, `left_position`, `right_position` and `strand`, and converts them to `GenomicInterval`s, 1-based and inclusive, with the record as the metadata of `GenomicInterval(record)`, or none for `GenomicInterval{Nothing}(record)`.
 - Requires Julia 1.12, for the `public` keyword and workspaces.
-- The tests are a project of the package's workspace, resolved together with it in one manifest; the generator of the bindings, `gen/`, is a project of its own.
+- The tests and the documentation are projects of the package's workspace, resolved together with it in one manifest; the generator of the bindings, `gen/`, is a project of its own.
+- Documentation, with a reference of the low-level bindings.
