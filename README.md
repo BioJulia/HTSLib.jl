@@ -140,6 +140,21 @@ We appreciate contributions from users including reporting bugs, fixing issues, 
 See the [contributing files](https://github.com/BioJulia/Contributing) for detailed contributor and maintainer guidelines and the code of conduct.
 
 This project follows [semantic versioning](https://semver.org), and records notable changes in [CHANGELOG.md](CHANGELOG.md).
+Development happens on the [develop branch](https://github.com/BioJulia/HTSLib.jl/tree/develop), following the [git-flow branching model](https://nvie.com/posts/a-successful-git-branching-model/):
+- features branch from `develop`, and merge back into it by pull request;
+- hotfixes branch from `master`, and merge back into it by pull request;
+- releases and hotfixes branch as `release/vX.Y.Z` and `hotfix/vX.Y.Z`, set that version in `Project.toml`, move the unreleased entries of `CHANGELOG.md` into a `## [X.Y.Z]` section, and merge into `master` by pull request; the Back-merge workflow then opens a pull request from a `back-merge/vX.Y.Z` branch at `master` into `develop`, which brings them back, never one from the release or hotfix branch itself.
+  A conflict with `develop` is resolved on the `back-merge/vX.Y.Z` branch, by merging `develop` into it.
+
+The [checks of BioJulia/Workflows](https://github.com/BioJulia/Workflows) enforce this, on pull requests into `master`:
+- that it comes from a `release/*` branch of `develop` or a `hotfix/*` branch of `master`, of this repository or a fork;
+- that its version is that of the branch's name, a single step up from `master`'s, and the next patch for a hotfix;
+- that the changelog describes the version, with its comparison links, and leaves nothing unreleased;
+- that a change that breaks the public API, the tests or the compat bounds of `master` takes a breaking version and a `### Breaking` subsection, and that a hotfix doesn't break.
+
+And on pull requests into `develop`: that it doesn't come from a `release/*` or `hotfix/*` branch, and that it adds an entry under `## [Unreleased]`, unless it brings `master` back, or a maintainer has labelled it `skip changelog`, for a change that users won't notice.
+Rulesets on `master` and `develop` require these checks; the README of BioJulia/Workflows describes them, their setup, and how to run them locally.
+
 ## Testing
 
 The tests check the bindings and the thin layer over them, not htslib itself: the layouts of the structs, that libhts has every bound symbol, and that the layer passes options and positions to htslib, iterates, frees what it allocates and reports errors, on a few records with results worked out by hand:
