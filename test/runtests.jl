@@ -8,9 +8,19 @@
 
 using Test
 using HTSLib
+using HTSLib: bgzip, bgzip_decompress, tabix_index, sequence_names, overlaps, query, each_overlap, records, each_record
+using MemoryViews: ImmutableMemoryView
+using StringViews: StringView
 # The functions of the Libdl standard library, which Base has without the dependency.
 using Base.Libc.Libdl: dlsym
 import htslib_jll
+
+# Write `lines` to `name` in `directory`, after a header, and return the path.
+function write_lines(directory, name, lines; header = String[])
+    path = joinpath(directory, name)
+    write(path, join(vcat(header, lines), '\n'), '\n')
+    return path
+end
 
 # The C symbols that Bindings binds, from its `ccall`s, `cglobal`s and `@ccall`s.
 function bound_symbols()
@@ -21,11 +31,15 @@ function bound_symbols()
     return unique(names)
 end
 
+const BED_LINES = ["chr1\t10\t20\ta", "chr1\t30\t40\tb", "chr2\t0\t5\tc"]
+
 if !HTSLib.is_available()
     @warn "htslib_jll is not available on this platform; skipping the tests."
 else
 
     @testset "HTSLib" begin
+        directory = mktempdir()
+
         @testset "Bindings" begin
             # The structs that are read from or passed to htslib have the sizes and offsets of C's on 64-bit platforms.
             if Sys.WORD_SIZE == 64
@@ -53,6 +67,31 @@ else
             @test bed.preset & HTSLib.Bindings.TBX_UCSC != 0
             @test HTSLib.version() == VersionNumber(pkgversion(htslib_jll).major, pkgversion(htslib_jll).minor, pkgversion(htslib_jll).patch)
         end
+
+        @testset "bgzip" begin
+            plain = write_lines(directory, "bgzip.bed", BED_LINES)
+            @test bgzip(plain) == plain * ".gz"
+            @test isfile(plain)
+            # More than the 1 MiB buffer of `bgzip`, so that it writes several times.
+            large = write_lines(directory, "large.txt", [string(k) for k in 1:300_000])
+            for (keywords, name) in [((;), "default.gz"), ((; level = 0), "level0.gz"), ((; level = 9), "level9.gz"), ((; threads = 2), "threads.gz")]
+                destination = bgzip(large, joinpath(directory, name); keywords...)
+                @test read(`$(htslib_jll.bgzip()) -dc $(destination)`, String) == read(large, String)
+                decomp = bgzip_decompress(destination, joinpath(directory, name * ".out"); threads = 2)
+                @test read(decomp, String) == read(large, String)
+            end
+            @test filesize(joinpath(directory, "level0.gz")) > filesize(joinpath(directory, "level9.gz"))
+            @test_throws ArgumentError bgzip(plain, joinpath(directory, "invalid.gz"); level = 10)
+        end
+
+        @testset "Type Hierarchy" begin
+            @test TabixFile <: AbstractHTSFile
+            # A record owns its bytes or borrows htslib's, which its type parameter says; a view is a borrowing record.
+            @test TabixRecord <: AbstractHTSRecord
+            @test TabixRecordView === TabixRecord{HTSLib.Borrowed} && TabixRecordView <: TabixRecord
+        end
+
+        include("tabix/tabix.jl")
     end
 
 end

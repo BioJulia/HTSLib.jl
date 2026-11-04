@@ -1,9 +1,11 @@
 [deps]
 HTSLib = "967b4d16-c30e-43f3-8a16-58933212b586"
+MemoryViews = "a791c907-b98b-4e44-8f4d-e4c2362c6b2f"
+StringViews = "354b36f9-a18e-4713-926e-db85100087ba"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 htslib_jll = "f06fe41e-9474-5571-8c61-5634d2b2700c"
 
 # Compat bounds for the packages that only the tests use.
-# The bounds of HTSLib.jl's dependencies are in its own Project.toml, which the workspace resolves together with this one.
+# The bounds of HTSLib.jl's dependencies, MemoryViews and StringViews among them, are in its own Project.toml, which the workspace resolves together with this one.
 [compat]
 Test = "1"
