@@ -2,3 +2,15 @@ name = "HTSLib"
 uuid = "967b4d16-c30e-43f3-8a16-58933212b586"
 version = "0.1.0"
 authors = ["Ciarán O'Mara <Ciaran.OMara@utas.edu.au>"]
+
+[deps]
+htslib_jll = "f06fe41e-9474-5571-8c61-5634d2b2700c"
+
+[compat]
+htslib_jll = "~1.19.1"
+julia = "1.12"
+
+# The tests are a project of this workspace, which resolves them together with the package, in one manifest.
+# The generator of the bindings, gen/, is a project of its own, so that the tests don't install Clang.jl and libclang, which only regenerating the bindings needs.
+[workspace]
+projects = ["test"]

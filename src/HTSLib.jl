@@ -1,17 +1,31 @@
+"""
+    HTSLib
+
+Julia bindings to [htslib](https://github.com/samtools/htslib), the C library behind `bgzip`, `tabix` and samtools, from htslib_jll.
+
+Its use is as a reference implementation, to validate and benchmark Julia packages against htslib in-process, so it reports what htslib finds rather than offering an API of its own for the formats.
+The low-level bindings are in [`HTSLib.Bindings`](@ref).
+"""
 module HTSLib
 
-"""
-    hello(who::String)
+import htslib_jll
 
-Return "Hello, `who`".
-"""
-hello(who::String) = "Hello, $who"
+public Bindings, is_available, version
+
+include("Bindings.jl")
 
 """
-    domath(x::Number)
+    HTSLib.is_available() -> Bool
 
-Return `x + 5`.
+Whether htslib_jll provides htslib for this platform.
 """
-domath(x::Number) = x + 5
+is_available() = htslib_jll.is_available()
+
+"""
+    HTSLib.version() -> VersionNumber
+
+The version of the loaded htslib.
+"""
+version() = VersionNumber(match(r"^\d+(\.\d+){0,2}", Bindings.hts_version()).match)
 
 end # module HTSLib

@@ -33,3 +33,6 @@ JuliaLocalPreferences.toml
 
 .DS_Store
 .idea/
+
+# Clang.jl's complete output, written by gen/generate.jl --full.
+gen/Generated.jl
