@@ -4,6 +4,8 @@
 [![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/BioJulia/HTSLib.jl/blob/master/LICENSE)
 [![Stable documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://biojulia.github.io/HTSLib.jl/stable)
 [![Latest documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://biojulia.github.io/HTSLib.jl/dev)
+[![Unit Tests](https://github.com/BioJulia/HTSLib.jl/actions/workflows/UnitTests.yml/badge.svg)](https://github.com/BioJulia/HTSLib.jl/actions/workflows/UnitTests.yml)
+[![codecov](https://codecov.io/gh/BioJulia/HTSLib.jl/branch/develop/graph/badge.svg)](https://codecov.io/gh/BioJulia/HTSLib.jl)
 
 Julia bindings to [htslib](https://github.com/samtools/htslib), the C library behind `bgzip`, `tabix` and samtools, loaded from [htslib_jll](https://github.com/JuliaBinaryWrappers/htslib_jll.jl).
 

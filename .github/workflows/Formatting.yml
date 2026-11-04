@@ -1,0 +1,30 @@
+name: Formatting
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+
+# A new push to a pull request cancels the run of its outdated commit; the runs of pushes to branches, and of tags, all finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  runic:
+    name: Runic
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Runic's action runs on the runner's Julia, which not every runner image provides.
+      - uses: julia-actions/setup-julia@da908477b5db94c10ffce8cfea9f2b3b9d5db687 # v3.0.3
+        with:
+          version: '1'
+      - uses: fredrikekre/runic-action@b4dbd650db5cc684baae27fea45d22daf41693c2 # v1.5.0
+        with:
+          version: '1'
