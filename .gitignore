@@ -30,3 +30,9 @@ JuliaLocalPreferences.toml
 
 # Conda environment and metadata created in the project directory by the CondaPkg package
 .CondaPkg/
+
+.DS_Store
+.idea/
+
+# Clang.jl's complete output, written by gen/generate.jl --full.
+gen/Generated.jl

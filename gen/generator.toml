@@ -1,0 +1,13 @@
+[general]
+library_name = "libhts"
+module_name = "HTSLibGenerated"
+jll_pkg_name = "htslib_jll"
+prologue_file_path = ""
+epilogue_file_path = ""
+use_deterministic_symbol = true
+print_using_CEnum = false
+# Extracting doxygen comments takes about 20 minutes, rather than 20 seconds.
+extract_c_comment_style = "disable"
+
+[codegen]
+use_ccall_macro = true

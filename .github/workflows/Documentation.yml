@@ -1,0 +1,38 @@
+# Documentation: a push to develop deploys the development documentation, a version tag that version's, and a pull request, a release's or a hotfix's into master included, a preview under previews/PR<number>, since docs/make.jl sets `push_preview`.
+# master isn't built, since each release's tag deploys its documentation.
+name: Documentation
+
+on:
+  push:
+    branches:
+      - develop
+    tags: '*'
+  pull_request:
+  workflow_dispatch:
+
+# A new push to a pull request cancels the run of its outdated commit; the runs of pushes to branches, and of tags, all finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  Documenter:
+    name: Documentation
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: read
+      statuses: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # The docs project is a project of the package's workspace, resolved together with it.
+      - uses: julia-actions/setup-julia@da908477b5db94c10ffce8cfea9f2b3b9d5db687 # v3.0.3
+        with:
+          version: '1'
+      - uses: julia-actions/cache@9353db09a0f2bbbdec6f41791918c75d37391b36 # v3.5.0
+      - uses: julia-actions/julia-buildpkg@e3eb439fad4f9aba7da2667e7510e4a46ebc46e1 # v1.7.0
+      - uses: julia-actions/julia-docdeploy@e62cc8fd639797a0c2922a437d5b1b81c4a12787 # v1.3.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
