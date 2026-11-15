@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-07
+
 - Low-level bindings in `HTSLib.Bindings`: a `ccall` of each C function of htslib that the package uses, and others for packages that need them, such as writing alignments and building their indexes, with the C structs and constants.
 - A generator of the low-level bindings, `gen/generate.jl`, which writes their functions, plain structs and constants with Clang.jl from the headers of htslib_jll, as `gen/selection.jl` selects them, and checks the layouts of the structs written by hand.
 - htslib_jll's compat is `~1.19.1`, the version the bindings are generated from; the generator fails if the compat admits another minor version.
@@ -27,3 +29,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Gitflow, with the checks of BioJulia/Workflows: checks that pull requests into `master` come from `release/*` branches of `develop` or `hotfix/*` branches of `master`, take the next version, describe it in the changelog with its comparison links, and, if they break the public API or `master`'s tests, or narrow a compat bound, take a breaking version and say so in the changelog; and that pull requests into `develop` don't come from `release/*` or `hotfix/*` branches, and add a changelog entry.
 - Back-merge: once a release or hotfix merges into `master`, the workflow of BioJulia/Workflows opens the pull request that brings `master` back into `develop`, from a `back-merge/vX.Y.Z` branch, and merges it once TagBot has tagged the release.
 - Releases, registration and tags, with the workflows of BioJulia/Workflows: started by hand, the Release workflow prepares a release or hotfix branch and its pull request; once it merges into `master`, the Register workflow asks Registrator to register it, and TagBot tags it once the registry merges it.
+
+[Unreleased]: https://github.com/BioJulia/HTSLib.jl/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/BioJulia/HTSLib.jl/releases/tag/v0.1.0
